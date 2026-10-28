@@ -185,7 +185,7 @@ Potential improvements include:
 
 **Karan Jaiswal**
 
-GitHub: Add your GitHub profile URL here.
+GitHub:(https://github.com/KaranJaiswal-2603)
 
 ## License
 
