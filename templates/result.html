@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">ResumeParser</a>
+            <a href="{{ url_for('dashboard') }}" class="text-link">Dashboard</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="upload-card results-card">
+            <div class="success-icon">✓</div>
+            <h1>Resume Analysis Results</h1>
+            <p class="description">Candidate ID: {{ candidate_id }}</p>
+
+            <h2>Personal Information</h2>
+            <div class="detail-list">
+                <p><strong>Name:</strong> {{ candidate.full_name or "Not found" }}</p>
+                <p><strong>Email:</strong> {{ candidate.email or "Not found" }}</p>
+                <p><strong>Phone:</strong> {{ candidate.phone or "Not found" }}</p>
+            </div>
+
+            <h2>Technical Skills</h2>
+            {% if candidate.skills %}
+                <div class="skill-list">
+                    {% for skill in candidate.skills %}
+                        <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No skills detected.</p>
+            {% endif %}
+
+            <h2>Education</h2>
+            {% if candidate.education %}
+                <ul class="detail-list">
+                    {% for item in candidate.education %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No education details detected.</p>
+            {% endif %}
+
+            <h2>Work Experience</h2>
+            {% if candidate.experience %}
+                <ul class="detail-list">
+                    {% for item in candidate.experience %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No work experience or internship details detected.</p>
+            {% endif %}
+
+            <div class="inline-actions">
+                <a class="primary-link"
+                   href="{{ url_for('candidate_detail', candidate_id=candidate_id) }}">
+                    View Candidate Profile
+                </a>
+                <a class="secondary-link" href="{{ url_for('home') }}">
+                    Upload Another Resume
+                </a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

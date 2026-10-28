@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Profile | ResumeParser</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="header">
+    <div class="container header-inner">
+        <a href="{{ url_for('home') }}" class="logo">ResumeParser</a>
+        <a href="{{ url_for('dashboard') }}" class="text-link">Dashboard</a>
+    </div>
+</header>
+
+<main class="main-content">
+<section class="upload-card results-card">
+    <h1>{{ candidate[1] or "Candidate Profile" }}</h1>
+    <p class="description">Candidate ID: {{ candidate[0] }}</p>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="flash-message {{ category }}" role="status">{{ message }}</div>
+    {% endfor %}
+
+    <h2>Personal Information</h2>
+    <div class="detail-list">
+        <p><strong>Name:</strong> {{ candidate[1] or "Not found" }}</p>
+        <p><strong>Email:</strong> {{ candidate[2] or "Not found" }}</p>
+        <p><strong>Phone:</strong> {{ candidate[3] or "Not found" }}</p>
+    </div>
+
+    <h2>Technical Skills</h2>
+    {% if candidate[4] %}
+        <div class="skill-list">
+            {% for skill in candidate[4] %}
+                <span class="skill-tag">{{ skill }}</span>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No skills recorded.</p>
+    {% endif %}
+
+    <h2>Education</h2>
+    {% if candidate[5] %}
+        <ul class="detail-list">
+            {% for item in candidate[5] %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No education details recorded.</p>
+    {% endif %}
+
+    <h2>Work Experience</h2>
+    {% if candidate[6] %}
+        <ul class="detail-list">
+            {% for item in candidate[6] %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No work experience or internship details recorded.</p>
+    {% endif %}
+
+    <div class="profile-actions">
+        <a class="primary-link"
+           href="{{ url_for('edit_candidate', candidate_id=candidate[0]) }}">
+            Edit Candidate
+        </a>
+
+        <form method="POST"
+              action="{{ url_for('remove_candidate', candidate_id=candidate[0]) }}"
+              onsubmit="return confirm('Are you sure you want to delete this candidate? This action cannot be undone.');">
+            <button type="submit" class="delete-button">Delete Candidate</button>
+        </form>
+
+        <a href="{{ url_for('dashboard') }}" class="secondary-link">
+            Back to Dashboard
+        </a>
+    </div>
+</section>
+</main>
+</body>
+</html>

@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="header">
+    <div class="container header-inner">
+        <a href="{{ url_for('home') }}" class="logo">ResumeParser</a>
+        <span class="header-label">Candidate Management</span>
+    </div>
+</header>
+
+<main class="main-content dashboard-main">
+<section class="upload-card dashboard-card">
+    <h1>Candidate Dashboard</h1>
+    <p class="description">Search, filter, sort, and manage parsed resumes.</p>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="flash-message {{ category }}" role="status">{{ message }}</div>
+    {% endfor %}
+
+    <div class="dashboard-summary">
+        <span>Total matching candidates</span>
+        <strong>{{ total }}</strong>
+    </div>
+
+    <form method="GET" action="{{ url_for('dashboard') }}" class="filter-form">
+        <div class="filter-field">
+            <label for="q">Search all fields</label>
+            <input type="search" id="q" name="q" class="form-input"
+                   placeholder="Name, email, phone, filename..."
+                   value="{{ search_term }}">
+        </div>
+
+        <div class="filter-field">
+            <label for="skill">Skill</label>
+            <input type="text" id="skill" name="skill" class="form-input"
+                   placeholder="e.g. Python" value="{{ skill }}">
+        </div>
+
+        <div class="filter-field">
+            <label for="education">Education</label>
+            <input type="text" id="education" name="education" class="form-input"
+                   placeholder="e.g. B.Tech" value="{{ education_filter }}">
+        </div>
+
+        <div class="filter-field">
+            <label for="experience">Work experience</label>
+            <input type="text" id="experience" name="experience" class="form-input"
+                   placeholder="e.g. Internship" value="{{ experience_filter }}">
+        </div>
+
+        <div class="filter-field">
+            <label for="sort_by">Sort by</label>
+            <select id="sort_by" name="sort_by" class="form-input">
+                <option value="newest" {% if sort_by == "newest" %}selected{% endif %}>Newest first</option>
+                <option value="oldest" {% if sort_by == "oldest" %}selected{% endif %}>Oldest first</option>
+                <option value="name_asc" {% if sort_by == "name_asc" %}selected{% endif %}>Name: A–Z</option>
+                <option value="name_desc" {% if sort_by == "name_desc" %}selected{% endif %}>Name: Z–A</option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="primary-button">Apply Filters</button>
+            <a href="{{ url_for('dashboard') }}" class="secondary-link">Reset</a>
+        </div>
+    </form>
+
+    <p class="description">
+        Showing {{ start_index }}–{{ end_index }} of {{ total }} candidates
+    </p>
+
+    {% if candidates %}
+    <div class="table-container">
+        <table class="candidate-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Skills</th>
+                <th>Education</th>
+                <th>Experience</th>
+                <th>Resume File</th>
+                <th>Uploaded</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for candidate in candidates %}
+            <tr>
+                <td>{{ candidate[0] }}</td>
+                <td>{{ candidate[1] or "Not found" }}</td>
+                <td>{{ candidate[2] or "Not found" }}</td>
+                <td>{{ candidate[3] or "Not found" }}</td>
+                <td>{{ (candidate[4] or [])|join(", ") or "—" }}</td>
+                <td>{{ (candidate[5] or [])|join(", ") or "—" }}</td>
+                <td>{{ (candidate[6] or [])|join(", ") or "—" }}</td>
+                <td>{{ candidate[7] or "—" }}</td>
+                <td>
+                    {% if candidate[8] %}
+                        {{ candidate[8].strftime("%d %b %Y, %H:%M") }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('candidate_detail', candidate_id=candidate[0]) }}">
+                        View Profile
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if total_pages > 1 %}
+    <nav class="pagination" aria-label="Candidate pages">
+        {% if page > 1 %}
+            <a href="{{ url_for('dashboard', q=search_term, skill=skill, education=education_filter, experience=experience_filter, sort_by=sort_by, page=page-1) }}">Previous</a>
+        {% endif %}
+
+        {% for page_number in range(1, total_pages + 1) %}
+            {% if page_number == page %}
+                <span class="current-page" aria-current="page">{{ page_number }}</span>
+            {% else %}
+                <a href="{{ url_for('dashboard', q=search_term, skill=skill, education=education_filter, experience=experience_filter, sort_by=sort_by, page=page_number) }}">{{ page_number }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('dashboard', q=search_term, skill=skill, education=education_filter, experience=experience_filter, sort_by=sort_by, page=page+1) }}">Next</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <h3>No candidates found</h3>
+            <p>Try a different search term or remove some filters.</p>
+        </div>
+    {% endif %}
+
+    <div class="inline-actions">
+        <a href="{{ url_for('home') }}" class="primary-link">Upload Another Resume</a>
+    </div>
+</section>
+</main>
+
+<footer class="footer"><p>Automated Resume Parser &copy; 2026</p></footer>
+</body>
+</html>

@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Candidate | ResumeParser</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="header">
+    <div class="container header-inner">
+        <a href="{{ url_for('home') }}" class="logo">ResumeParser</a>
+        <span class="header-label">Edit Candidate</span>
+    </div>
+</header>
+
+<main class="main-content">
+<section class="upload-card results-card">
+    <h1>Edit Candidate Details</h1>
+    <p class="description">Candidate ID: {{ candidate.id }}</p>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="flash-message {{ category }}" role="status">{{ message }}</div>
+    {% endfor %}
+
+    <form method="POST">
+        <label for="full_name">Full Name</label>
+        <input class="form-input" id="full_name" name="full_name"
+               value="{{ candidate.full_name }}" required>
+
+        <label for="email">Email</label>
+        <input class="form-input" id="email" name="email" type="email"
+               value="{{ candidate.email }}">
+
+        <label for="phone">Phone</label>
+        <input class="form-input" id="phone" name="phone"
+               value="{{ candidate.phone }}">
+
+        <label for="skills">Skills (separated by commas)</label>
+        <textarea class="form-input" id="skills" name="skills"
+                  rows="4">{{ candidate.skills|join(", ") }}</textarea>
+
+        <label for="education">Education (one entry per line)</label>
+        <textarea class="form-input" id="education" name="education"
+                  rows="5">{{ candidate.education|join("\n") }}</textarea>
+
+        <label for="experience">Work Experience (one entry per line)</label>
+        <textarea class="form-input" id="experience" name="experience"
+                  rows="5">{{ candidate.experience|join("\n") }}</textarea>
+
+        <button type="submit" class="primary-button">Save Changes</button>
+    </form>
+
+    <a href="{{ url_for('candidate_detail', candidate_id=candidate.id) }}"
+       class="secondary-link">Cancel</a>
+</section>
+</main>
+</body>
+</html>

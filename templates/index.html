@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Resume Parser</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">ResumeParser</a>
+            <span class="header-label">Resume Management System</span>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="upload-card">
+            <div class="icon-container" aria-hidden="true">↑</div>
+            <h1>Automated Resume Parser</h1>
+
+            {% for category, message in get_flashed_messages(with_categories=true) %}
+                <div class="flash-message {{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+
+            <p class="description">
+                Upload a resume to extract candidate details, technical skills,
+                education, and work experience.
+            </p>
+
+            <form id="resume-form" action="{{ url_for('upload_resume') }}"
+                  method="POST" enctype="multipart/form-data">
+                <label for="resume" class="file-label">Select your resume</label>
+                <div class="file-drop-area">
+                    <input type="file" id="resume" name="resume"
+                           accept=".pdf,.docx" required>
+                    <p id="file-name">Choose a PDF or DOCX file</p>
+                    <span class="file-hint">Maximum file size: 10 MB</span>
+                </div>
+
+                <p id="error-message" class="error-message"
+                   role="alert" aria-live="polite"></p>
+                <button type="submit" id="upload-button">Upload Resume</button>
+            </form>
+
+            <p class="privacy-note">
+                Candidate information is stored in your configured database.
+            </p>
+            <a class="text-link" href="{{ url_for('dashboard') }}">
+                Open Candidate Dashboard
+            </a>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Automated Resume Parser &copy; 2026</p>
+    </footer>
+</body>
+</html>
